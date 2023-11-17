@@ -1,11 +1,97 @@
 #root {
-  max-width: 1280px;
+ /* max-width: 1280px;
   margin: 0 auto;
-  padding: 2rem;
+  padding: 2rem;*/
   text-align: center;
+  width:100% !important;
+  height: 100vh;
+  display: block;
+}
+.Card {
+  background-color: #151920 !important;
+}
+.Avatar-inline{
+  display: inline-block !important;
+}
+p {
+  color:teal;
+}
+.GroupName{
+  color:white;
+  font-weight: 600;
+  font-size: 20px;;
+}
+.Player{
+  margin-top: 0px;
+  margin-bottom: 0px;
+  color:white;
+  font-family: digital-7;
+}
+.CardHeader{
+  color:wheat;
 }
 
-.logo {
+.Timer-Font{
+  font-family: digital-7;
+  font-size: 20px;
+}
+.Time-To-Day{
+  border-right: 1px solid #202428 !important;
+  margin-top: 0px;
+  margin-bottom: 0px;
+}
+.Button-Timmer{
+  font-weight: 500 !important;
+  font-size: 20px !important;
+}
+.Button-Match{
+  text-align: right;
+}
+.Menu-Template{
+  height: 90vh;
+  background-color: #101418;
+  border-right: 1px solid #202428;
+}
+.Menu-List{
+  color: white;
+  background-color: #101418;
+  text-align: left;
+}
+.Item-List{
+  word-spacing: 100px !important;
+}
+.Item-List:hover{
+  background-color: #161b21;
+}
+.Grid-header{
+  margin-bottom: 20px;
+  border-bottom: 1px solid #202428;
+}
+.Grid-Footer{
+  padding-top:10px;
+  padding-bottom: 10px;
+  border-top: 1px solid #202428;
+}
+.Grid-Content{
+  display: inline-block !important;
+  padding-top: 10px !important;
+  padding-bottom: 10px !important;
+  padding-left: 10px !important;
+  padding-right: 10px !important;
+}
+.icon{
+  color:white !important;
+}
+th,tbody{
+  height:100%;
+  background-color: #1e1e1e;
+  color:white !important;
+}
+td{
+  color:white !important;
+}
+
+/*.logo {
   height: 6em;
   padding: 1.5em;
   will-change: filter;
@@ -39,4 +125,5 @@
 
 .read-the-docs {
   color: #888;
-}
+}*/
+
