@@ -36,6 +36,13 @@ import PeopleAltIcon from "@mui/icons-material/PeopleAlt";
 import HomeIcon from "@mui/icons-material/Home";
 import AttachMoneyIcon from "@mui/icons-material/AttachMoney";
 import StackedBarChartIcon from "@mui/icons-material/StackedBarChart";
+import SportsBaseballIcon from '@mui/icons-material/SportsBaseball';
+import FingerprintIcon from '@mui/icons-material/Fingerprint';
+
+import Player from "../src/Player/Player";
+import Typeplayer from "../src/Typeplayer/Typeplayer";
+
+import { BrowserRouter,Route,Link, Router, Routes } from 'react-router-dom'
 
 function App() {
   const [count, setCount] = useState(0);
@@ -104,11 +111,31 @@ const Template_Web = () => {
                 </ListItemIcon>
                 <ListItemText className="Item-List">ผู้เล่น</ListItemText>
               </MenuItem>
+              <MenuItem onClick={(event) =>{
+                SetMenuId(4);
+              }}>
+                <ListItemIcon>
+                  <FingerprintIcon
+                    className="icon"
+                    fontSize="small"
+                  ></FingerprintIcon>
+                </ListItemIcon>
+                <ListItemText className="Item-List">ฝีมือ</ListItemText>
+              </MenuItem>
               <MenuItem>
                 <ListItemIcon>
                   <HomeIcon className="icon" fontSize="small"></HomeIcon>
                 </ListItemIcon>
                 <ListItemText className="Item-List">สนาม</ListItemText>
+              </MenuItem>
+              <MenuItem href={'/app'}>
+                <ListItemIcon>
+                  <SportsBaseballIcon
+                    className="icon"
+                    fontSize="small"
+                  ></SportsBaseballIcon>
+                </ListItemIcon>
+                <ListItemText className="Item-List">ลูกแบด</ListItemText>
               </MenuItem>
               <MenuItem>
                 <ListItemIcon>
@@ -135,7 +162,8 @@ const Template_Web = () => {
         <Grid className="Grid-Content" xs={10}>
           {MenuId === 1 ? <Show_courtbadminton></Show_courtbadminton> : null}
           {MenuId === 2 ? <Show_courtbadminton></Show_courtbadminton> : null}
-          {MenuId === 3 ? <Menu_Player></Menu_Player> : null}
+          {MenuId === 3 ? <Player></Player> : null}
+          {MenuId === 4 ? <Typeplayer></Typeplayer> : null}
         </Grid>
       </Grid>
       {/**Content */}
@@ -359,62 +387,5 @@ function Show_courtbadminton() {
     </>
   );
 }
-
-const Menu_Player = () => {
-  return (
-    <>
-      <Grid container xs={12}>
-        <Grid xs={11}>
-          <p>รายชื่อสมาชิก</p>
-        </Grid>
-        <Grid xs={1}>
-          <Button variant="outlined" color="success">
-            เพิ่มสมาชิก
-          </Button>
-        </Grid>
-      </Grid>
-      <Grid container xs={12} className="Table-Player">
-        <TableContainer component={Paper} >
-          <Table>
-            <TableHead>
-              <TableRow>
-                <TableCell>รายชื่อ</TableCell>
-                <TableCell>ฝีมือ</TableCell>
-                <TableCell>เบอร์โทร</TableCell>
-                <TableCell>แก้ไข</TableCell>
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              <TableRow>
-                <TableCell>ตี้</TableCell>
-                <TableCell>P</TableCell>
-                <TableCell>091-223-1234</TableCell>
-                <TableCell><EditIcon fontSize="small"></EditIcon></TableCell>
-              </TableRow>
-              <TableRow>
-                <TableCell>โตน</TableCell>
-                <TableCell>P</TableCell>
-                <TableCell>091-223-1234</TableCell>
-                <TableCell><EditIcon fontSize="small"></EditIcon></TableCell>
-              </TableRow>
-              <TableRow>
-                <TableCell>วาย</TableCell>
-                <TableCell>กาก</TableCell>
-                <TableCell>091-223-1234</TableCell>
-                <TableCell><EditIcon fontSize="small"></EditIcon></TableCell>
-              </TableRow>
-              <TableRow>
-                <TableCell>ตูน</TableCell>
-                <TableCell>กาก</TableCell>
-                <TableCell>091-223-1234</TableCell>
-                <TableCell><EditIcon fontSize="small"></EditIcon></TableCell>
-              </TableRow>
-            </TableBody>
-          </Table>
-        </TableContainer>
-      </Grid>
-    </>
-  );
-};
 
 export default Template_Web;

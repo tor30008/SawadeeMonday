@@ -1,0 +1,51 @@
+.Modal_Register_Player {
+    position: absolute;
+    top : 30%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 400;
+    border: 2px solid #000;
+    box-shadow: 24;
+    p: 4;
+    background-color: rgb(41, 40, 40);
+    padding: 20px 20px 20px 20px;
+    text-align: center;
+    width: 30%;
+} 
+.Modal_Avatar{
+    justify-content: center;
+    display: flex;
+    height: 200px !important;
+    color:white;
+    margin-bottom: 20px !important;
+}
+.Button_Avatar{
+    width: 200px !important;
+    height: 200px !important;
+    border-radius: 50% !important;
+}
+.Profile_Avatar{
+    width:210px !important;
+    height:210px !important;
+    border-radius: 50% !important;
+}
+.Avatar{
+    width:100px !important;
+    height: auto !important;
+}
+input[type=file]{
+    opacity: 0;
+    position: absolute;
+    top:0;
+    left:0;
+    right:0;
+    bottom:0;
+}
+
+.Grid_modal_text{
+    margin-bottom: 10px;
+}
+.MuiInputLabel-root {
+    color:white !important;
+}
+    
