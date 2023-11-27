@@ -1,6 +1,6 @@
 .Modal_Register_Player {
     position: absolute;
-    top : 30%;
+    top : 40%;
     left: 50%;
     transform: translate(-50%, -50%);
     width: 400;
@@ -48,4 +48,10 @@ input[type=file]{
 .MuiInputLabel-root {
     color:white !important;
 }
-    
+.Grid_modal_select{ 
+    margin-bottom:10px !important;
+}
+.Tablecell-Avatar{
+    display: inline-flex !important;
+    vertical-align: middle !important;
+}

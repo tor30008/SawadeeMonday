@@ -49,7 +49,7 @@ function App() {
 
   return (
     <>
-      return <Button variant="contained">Hello world</Button>;
+      return <Button item="true" variant="contained">Hello world</Button>;
     </>
   );
 }
@@ -196,21 +196,22 @@ function Timer() {
   //console.log(minutes);
   return (
     <>
-      <Button color="secondary">
-        <p className="Timer-Font">
+      <Button color="secondary" item="true">
+        <p className="Timer-Font" >
           {minutes} Min :{seconds} Seconds
         </p>
       </Button>
       <br></br>
-      <Button className="Button-Timmer" color="success" onClick={start}>
+      <Button item="true" className="Button-Timmer" color="success" onClick={start}>
         เริ่ม
       </Button>
-      <Button className="Button-Timmer" color="error" onClick={pause}>
+      <Button item="true" className="Button-Timmer" color="error" onClick={pause}>
         หยุด
       </Button>
       <Button
         className="Button-Timmer"
         color="secondary"
+        item="true"
         onClick={(event) => {
           {
             Finish_Match({ totalSeconds });
