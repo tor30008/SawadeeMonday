@@ -30,17 +30,22 @@ import Avatar from "@mui/material/Avatar";
 
 import "../Player/Player.css";
 import FetchData from "../Service/Service";
-import Addprofile_service from "../Player/Player_service";
+import {Addprofile_service , Deleteprofile_service} from "../Player/Player_service";
 import Allplayer_service from "../Service/Allplayer_service";
 import { Add, AllInboxSharp } from "@mui/icons-material";
 import { red } from "@mui/material/colors";
+import DeleteIcon from '@mui/icons-material/Delete';
+import Alert from '@mui/material/Alert';
+import Stack from '@mui/material/Stack';
+import Swal from 'sweetalert2';
+import 'sweetalert2/src/sweetalert2.scss';
 
 function Player() {
   const [open, Setopen] = useState(false);
 
   const [Btn_checkprofile, setBtn_checkprofile] = useState(false);
 
-  const [Avatar_pic, setAvatar_pic] = useState(true);
+  const [Avatar_pic, setAvatar_pic] = useState(null);
 
   const [Name_profile, setName_profile] = useState("");
 
@@ -56,7 +61,13 @@ function Player() {
 
   const [Alllistplayer, setAlllistplayer] = useState(null);
 
-  const handleclose = () => Setopen(false);
+  const handleclose = () => {
+    Setopen(false);
+    setAvatar_pic(null);
+    setName_profile(null);
+    setPhone_profile(null);
+    setType_profile(null);
+  };
 
   const handleopen = () => {
     Setopen(true);
@@ -104,7 +115,6 @@ function Player() {
     } catch (error) {
       console.log(error);
     }
-    useEffect;
   };
   useEffect(() => {
     console.log(Reture_Typeid);
@@ -171,12 +181,12 @@ function Player() {
                         variant="contained"
                         item="true"
                         startIcon={
-                          Path_Profile === null ? (
+                          Avatar_pic === null ? (
                             <AddAPhotoIcon className={"Avatar"}></AddAPhotoIcon>
                           ) : (
                             <Avatar
                               className={"Profile_Avatar"}
-                              src={Path_Profile}
+                              src={Avatar_pic}
                             ></Avatar>
                           )
                         }
@@ -192,11 +202,9 @@ function Player() {
                               URL.createObjectURL(event.target.files[0])
                             );
                             setPath_Profile(
-                              URL.createObjectURL(event.target.files[0])
+                              event.target.files[0]
                             );
-                            // setPath_Profile(event.currentTarget.files[0]);
-                            //setAvatar_pic(false);
-                            //setBtn_checkprofile(true);
+                            setAvatar_pic(URL.createObjectURL(event.target.files[0]));
                           }}
                         ></input>
                       </Button>
@@ -210,8 +218,7 @@ function Player() {
                           accept="image/png, image/jpeg"
                           onChange={(event) => {
                             console.log(event.target.value);
-                            //setAvatar_pic(false);
-                            //setBtn_checkprofile(true);
+
                           }}
                         ></input>
                       </Avatar>
@@ -229,7 +236,7 @@ function Player() {
                       className={"Text_field "}
                       color="primary"
                       name="Name"
-                      defaultValue={""}
+                      defaultValue=""
                       multiline={false}
                       item="true"
                       InputLabelProps={{
@@ -252,7 +259,7 @@ function Player() {
                       id="outlined-basic"
                       label="เบอร์โทรเว้ย"
                       variant="outlined"
-                      defaultValue={""}
+                      defaultValue=""
                       multiline={false}
                       value={Phone_profile}
                       onChange={(event) => {
@@ -272,7 +279,7 @@ function Player() {
                         className={"Grid_modal_select"}
                         labelId="demo-simple-select-label"
                         id="demo-simple-select"
-                        value={0}
+                        
                         label="ประเภทมือ"
                         onChange={ChangeTypePlayer}
                         defaultValue={0}
@@ -338,6 +345,32 @@ function Player() {
 }
 
 const AllPlayer = ({ list = null }) => {
+
+  const Delete_Btn = (Player_id) =>{
+    //DeletePlayer(Player_id);
+    Swal.fire({
+      title:"คุณจะลบสมาชิกหมายเลข :"+ Player_id.Player_id,
+      showDenyButton:true,
+      showCancelButton:true,
+      confirmButtonText:"Delete",
+      denyButtonText:"Cancel"
+    }).then((result) =>{
+      if(result.isConfirmed){
+        DeletePlayer(Player_id);
+        Swal.fire("Delete Success","","success");
+      }
+    })
+  };
+
+  const DeletePlayer = async({Player_id=null}) =>{
+      try{
+        const res = await Deleteprofile_service(Player_id);
+        const data = await res;
+        console.log(data);
+      }catch(error){
+        console.log("Error : Delete Player");
+      }
+  }
   return (
     <>
       {list ? (
@@ -355,10 +388,10 @@ const AllPlayer = ({ list = null }) => {
               <TableBody>
                 {list.map((row)=>(
                   <TableRow key={row.Player_id}>
-                    <TableCell><span className={"Tablecell-Avatar"}><Avatar alt="Remy Sharp" src={row.Player_photo} /><p>{row.Player_photo}</p></span></TableCell>
+                    <TableCell><span className={"Tablecell"}><Avatar className={"Tablecell_avatar"} alt="Remy Sharp" src={row.Player_photo} /><p>{row.Player_name}</p></span></TableCell>
                     <TableCell>{row.Type_id}</TableCell>
                     <TableCell>{row.Player_tel}</TableCell>
-                    <TableCell><p>แก้ไข</p></TableCell>
+                    <TableCell><span className={"Tablecell"}><EditIcon color={"primary"} className={"Tablecell_avatar"}></EditIcon><DeleteIcon color={"error"} onClick={() => Delete_Btn({Player_id:row.Player_id})}></DeleteIcon></span></TableCell>
                   </TableRow>
       ))}
               </TableBody>
@@ -371,4 +404,5 @@ const AllPlayer = ({ list = null }) => {
     </>
   );
 };
+
 export default Player;

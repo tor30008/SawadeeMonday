@@ -51,7 +51,9 @@ input[type=file]{
 .Grid_modal_select{ 
     margin-bottom:10px !important;
 }
-.Tablecell-Avatar{
+.Tablecell{
     display: inline-flex !important;
-    vertical-align: middle !important;
+}
+.Tablecell_avatar{
+    margin-right: 20px;
 }
