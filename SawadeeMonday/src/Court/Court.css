@@ -1,0 +1,28 @@
+.Card{
+    background-color: #151920;
+}
+.CardAction_Court{
+    text-align: center;
+}
+.Modaladd{ 
+  position: 'absolute';
+  top: '50%';
+  left: '50%';
+  transform: 'translate(-50%, -50%)';
+  width: 30%;
+  border: '2px solid #000';
+  justify-content: center;
+  display: grid;
+  align-items: center;
+  text-align: center;
+  background-color: rgb(41, 40, 40);
+  border : 2px black solid;
+  padding: 10px;
+  margin-left: 35%;
+  border-radius: 10px;
+}
+.Gridmodal_add{
+    width:80%;
+    padding:0px;
+    margin-bottom: 10px;
+}

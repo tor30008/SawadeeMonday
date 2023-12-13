@@ -5,14 +5,14 @@ import viteLogo from "/vite.svg";
 import Avatar from "@mui/material/Avatar";
 import Button from "@mui/material/Button";
 import MenuItem from "@mui/material/MenuItem";
-import Table from '@mui/material/Table';
-import TableBody from '@mui/material/TableBody';
-import TableCell from '@mui/material/TableCell';
-import TableContainer from '@mui/material/TableContainer';
-import TableHead from '@mui/material/TableHead';
-import TableRow from '@mui/material/TableRow';
-import Paper from '@mui/material/Paper';
-import EditIcon from '@mui/icons-material/Edit';
+import Table from "@mui/material/Table";
+import TableBody from "@mui/material/TableBody";
+import TableCell from "@mui/material/TableCell";
+import TableContainer from "@mui/material/TableContainer";
+import TableHead from "@mui/material/TableHead";
+import TableRow from "@mui/material/TableRow";
+import Paper from "@mui/material/Paper";
+import EditIcon from "@mui/icons-material/Edit";
 
 import {
   CardContent,
@@ -36,24 +36,31 @@ import PeopleAltIcon from "@mui/icons-material/PeopleAlt";
 import HomeIcon from "@mui/icons-material/Home";
 import AttachMoneyIcon from "@mui/icons-material/AttachMoney";
 import StackedBarChartIcon from "@mui/icons-material/StackedBarChart";
-import SportsBaseballIcon from '@mui/icons-material/SportsBaseball';
-import FingerprintIcon from '@mui/icons-material/Fingerprint';
+import SportsBaseballIcon from "@mui/icons-material/SportsBaseball";
+import FingerprintIcon from "@mui/icons-material/Fingerprint";
 
 import Player from "../src/Player/Player";
 import Typeplayer from "../src/Typeplayer/Typeplayer";
+import Court from "../src/Court/Court";
+import * as ReactRouterDom from "react-router-dom";
+import { createBrowserRouter, RouterProvider, Link } from "react-router-dom";
 
-import { BrowserRouter,Route,Link, Router, Routes } from 'react-router-dom'
 
 function App() {
   const [count, setCount] = useState(0);
 
   return (
     <>
-      return <Button item="true" variant="contained">Hello world</Button>;
+      return{" "}
+      <Button item="true" variant="contained">
+        Hello world
+      </Button>
+      ;
     </>
   );
 }
-const Template_Web = () => {
+export const Template_Web = () => {
+
   const [today, setToday] = useState(new Date());
   const [TimetoDay, setTimetoDay] = useState("");
   const [MenuId, SetMenuId] = useState("");
@@ -78,13 +85,14 @@ const Template_Web = () => {
         <Grid className="Menu-Template" xs={2}>
           <Paper sx={{ width: "100%" }}>
             <MenuList className="Menu-List">
-              <MenuItem
-                onClick={(event) => {
+           
+                <MenuItem onClick={(event) => {
                   SetMenuId(1);
-                }}
-              >
-                <ListItemText className="Item-List">หน้าแรก</ListItemText>
-              </MenuItem>
+                }}>
+                  <HomeIcon className="icon" fontSize="small"></HomeIcon>
+                  <ListItemText className="Item-List">หน้าแรก</ListItemText>
+                </MenuItem>
+
               <MenuItem
                 onClick={(event) => {
                   SetMenuId(2);
@@ -111,9 +119,11 @@ const Template_Web = () => {
                 </ListItemIcon>
                 <ListItemText className="Item-List">ผู้เล่น</ListItemText>
               </MenuItem>
-              <MenuItem onClick={(event) =>{
-                SetMenuId(4);
-              }}>
+              <MenuItem
+                onClick={(event) => {
+                  SetMenuId(4);
+                }}
+              >
                 <ListItemIcon>
                   <FingerprintIcon
                     className="icon"
@@ -122,13 +132,17 @@ const Template_Web = () => {
                 </ListItemIcon>
                 <ListItemText className="Item-List">ฝีมือ</ListItemText>
               </MenuItem>
-              <MenuItem>
+              <MenuItem
+                onClick={(event) => {
+                  SetMenuId(5);
+                }}
+              >
                 <ListItemIcon>
                   <HomeIcon className="icon" fontSize="small"></HomeIcon>
                 </ListItemIcon>
                 <ListItemText className="Item-List">สนาม</ListItemText>
               </MenuItem>
-              <MenuItem href={'/app'}>
+              <MenuItem href={"/app"}>
                 <ListItemIcon>
                   <SportsBaseballIcon
                     className="icon"
@@ -160,10 +174,14 @@ const Template_Web = () => {
         </Grid>
         {/* Menu */}
         <Grid className="Grid-Content" xs={10}>
+          
           {MenuId === 1 ? <Show_courtbadminton></Show_courtbadminton> : null}
           {MenuId === 2 ? <Show_courtbadminton></Show_courtbadminton> : null}
           {MenuId === 3 ? <Player></Player> : null}
           {MenuId === 4 ? <Typeplayer></Typeplayer> : null}
+          {MenuId === 5 ? <Court></Court> : null}
+          
+         
         </Grid>
       </Grid>
       {/**Content */}
@@ -197,15 +215,25 @@ function Timer() {
   return (
     <>
       <Button color="secondary" item="true">
-        <p className="Timer-Font" >
+        <p className="Timer-Font">
           {minutes} Min :{seconds} Seconds
         </p>
       </Button>
       <br></br>
-      <Button item="true" className="Button-Timmer" color="success" onClick={start}>
+      <Button
+        item="true"
+        className="Button-Timmer"
+        color="success"
+        onClick={start}
+      >
         เริ่ม
       </Button>
-      <Button item="true" className="Button-Timmer" color="error" onClick={pause}>
+      <Button
+        item="true"
+        className="Button-Timmer"
+        color="error"
+        onClick={pause}
+      >
         หยุด
       </Button>
       <Button
@@ -228,7 +256,7 @@ const Finish_Match = ({ totalSeconds = "" }) => {
   console.log({ totalSeconds });
 };
 
-function Show_courtbadminton() {
+export function Show_courtbadminton() {
   const [data_click, set_data_click] = useState("key");
   const handleclick = (event) => {
     set_data_click("click1");
@@ -389,4 +417,4 @@ function Show_courtbadminton() {
   );
 }
 
-export default Template_Web;
+export default Template_Web

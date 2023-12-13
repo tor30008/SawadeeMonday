@@ -387,9 +387,8 @@ const AllPlayer = ({ list = null ,Typelist = null}) => {
   const Delete_Btn = (Player_id) =>{
     //DeletePlayer(Player_id);
     Swal.fire({
-      title:"คุณจะลบสมาชิกหมายเลข :"+ Player_id.Player_id,
+      title:"คุณต้องการหสมาชิกหมายเลข :"+ Player_id.Player_id,
       showDenyButton:true,
-      showCancelButton:true,
       confirmButtonText:"Delete",
       denyButtonText:"Cancel"
     }).then((result) =>{
@@ -427,7 +426,7 @@ const AllPlayer = ({ list = null ,Typelist = null}) => {
                 {list.map((row)=>(
                   <TableRow key={row.Player_id}>
                     <TableCell><span className={"Tablecell"}><Avatar className={"Tablecell_avatar"} alt="Remy Sharp" src={row.Player_photo} /><p>{row.Player_name}</p></span></TableCell>
-                    <TableCell>{row.Type_id}</TableCell>
+                    <TableCell>{row.Type_name} (Lv : {row.Type_id})</TableCell>
                     <TableCell>{row.Player_tel}</TableCell>
                     <TableCell><span className={"Tablecell"}><EditIcon onClick={() => handleopenedit({Player_id:row.Player_id})} color={"primary"} className={"Tablecell_avatar"}></EditIcon><DeleteIcon color={"error"} onClick={() => Delete_Btn({Player_id:row.Player_id})}></DeleteIcon></span></TableCell>
                   </TableRow>

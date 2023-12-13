@@ -21,6 +21,6 @@ const FetchData = async () => {
     console.warn(error);
     throw error;
   }
-}
+}//Typeplayer
 
 export default FetchData;

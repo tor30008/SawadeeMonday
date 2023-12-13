@@ -22,6 +22,10 @@
   url("/src/fonts/digital-7/digital-7\ \(mono\ italic\).ttf"),
   url("/src/fonts/digital-7/digital-7\ \(mono\).ttf")
 }
+body {
+  margin:0;
+  padding:0;
+}
 /*a {
   font-weight: 500;
   color: #646cff;
