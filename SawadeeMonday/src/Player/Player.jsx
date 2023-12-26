@@ -32,13 +32,14 @@ import "../Player/Player.css";
 import FetchData from "../Service/Service";
 import {Addprofile_service , Deleteprofile_service, Editprofile_service, Getprofile_service} from "../Player/Player_service";
 import Allplayer_service from "../Service/Allplayer_service";
-import { Add, AllInboxSharp } from "@mui/icons-material";
+import { Add, AllInboxSharp, Update } from "@mui/icons-material";
 import { red } from "@mui/material/colors";
 import DeleteIcon from '@mui/icons-material/Delete';
 import Alert from '@mui/material/Alert';
 import Stack from '@mui/material/Stack';
 import Swal from 'sweetalert2';
 import 'sweetalert2/src/sweetalert2.scss';
+import Switch from '@mui/material/Switch';
 
 function Player() {
   const [open, Setopen] = useState(false);
@@ -384,24 +385,40 @@ const AllPlayer = ({ list = null ,Typelist = null}) => {
     }
   }
 
-  const Delete_Btn = (Player_id) =>{
+  const Delete_Btn = (Player_id,Player_status,Player_name) =>{
+
+    let Update_status;
+    let title;
+    let buttontext;
+
+    if(Player_status == 1){
+      Update_status = 0 ;
+      title = "คุณต้องการถอนผู้เล่น "+`'`+Player_name+` ' ออกจากรายชื่อตีประจำ`;
+      buttontext = "ถอน";
+    }
+    else{
+      Update_status = 1;
+      title = "คุณต้องการเพิ่มผู้เล่น "+`'`+Player_name+` ' ในรายชื่อตีประจำ`;
+      buttontext = "เพิ่ม";
+    }
+
     //DeletePlayer(Player_id);
     Swal.fire({
-      title:"คุณต้องการหสมาชิกหมายเลข :"+ Player_id.Player_id,
+      title:title,
       showDenyButton:true,
-      confirmButtonText:"Delete",
-      denyButtonText:"Cancel"
+      confirmButtonText:buttontext,
+      denyButtonText:"ยกเลิก"
     }).then((result) =>{
       if(result.isConfirmed){
-        DeletePlayer(Player_id);
+        DeletePlayer(Player_id,Update_status);
         Swal.fire("Delete Success","","success");
       }
     })
   };
 
-  const DeletePlayer = async({Player_id=null}) =>{
+  const DeletePlayer = async(Player_id,Player_status) =>{
       try{
-        const res = await Deleteprofile_service(Player_id);
+        const res = await Deleteprofile_service(Player_id,Player_status);
         const data = await res;
         console.log(data);
       }catch(error){
@@ -416,19 +433,25 @@ const AllPlayer = ({ list = null ,Typelist = null}) => {
             <Table>
               <TableHead>
                 <TableRow>
+                  <TableCell>ลำดับ</TableCell>
                   <TableCell>รายชื่อ</TableCell>
                   <TableCell>ฝีมือ</TableCell>
                   <TableCell>เบอร์โทร</TableCell>
                   <TableCell>แก้ไข</TableCell>
+                  <TableCell>คนตีประจำ</TableCell>
                 </TableRow>
               </TableHead>
               <TableBody>
-                {list.map((row)=>(
+                {list.map((row,index)=>(
                   <TableRow key={row.Player_id}>
+                    <TableCell>{++index}</TableCell>
                     <TableCell><span className={"Tablecell"}><Avatar className={"Tablecell_avatar"} alt="Remy Sharp" src={row.Player_photo} /><p>{row.Player_name}</p></span></TableCell>
                     <TableCell>{row.Type_name} (Lv : {row.Type_id})</TableCell>
                     <TableCell>{row.Player_tel}</TableCell>
-                    <TableCell><span className={"Tablecell"}><EditIcon onClick={() => handleopenedit({Player_id:row.Player_id})} color={"primary"} className={"Tablecell_avatar"}></EditIcon><DeleteIcon color={"error"} onClick={() => Delete_Btn({Player_id:row.Player_id})}></DeleteIcon></span></TableCell>
+                    <TableCell><span className={"Tablecell"}><EditIcon onClick={() => handleopenedit({Player_id:row.Player_id})} color={"primary"} ></EditIcon></span></TableCell>
+                    <TableCell>
+                      <Switch checked={row.Player_status} onChange={() => {Delete_Btn(row.Player_id,row.Player_status,row.Player_name)}}></Switch>
+                    </TableCell>
                   </TableRow>
       ))}
               </TableBody>

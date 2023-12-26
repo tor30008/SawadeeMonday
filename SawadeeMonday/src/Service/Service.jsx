@@ -23,4 +23,19 @@ const FetchData = async () => {
   }
 }//Typeplayer
 
+
+export const Jointoday_service = async(Player_id,Joinday_status) => { 
+  const data = { 
+    Player_id : Player_id,
+    Joinday_status : Joinday_status
+  }
+  try{
+    const res = await axios.post("http://127.0.0.1:7777/Jointoday",data);
+    const result = res.data;
+    return result;
+  }catch(error){
+    console.log(error);
+  }
+}
+
 export default FetchData;

@@ -90,6 +90,25 @@ th,tbody{
 td{
   color:white !important;
 }
+.Grid_list{
+  height: 90vh;
+  width: 100%;
+  background-color: white !important; 
+  overflow: auto;
+}
+.Grid_small{
+  height: 44.2vh;
+  background-color: #1e1e1e;
+  overflow: auto;
+  width: 100%;
+  margin-bottom: 1vh;
+  color:white;
+}
+.Table_player_main{
+  width : 100%;
+  margin-left: 2px;
+  margin-right: 2px;
+}
 
 /*.logo {
   height: 6em;

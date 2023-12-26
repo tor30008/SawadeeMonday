@@ -225,9 +225,9 @@ const Allcourt = ({ list = null }) => {
           </TableHead>
           <TableBody>
             {list ? (
-              list.map((row) => (
+              list.map((row,index) => (
                 <TableRow>
-                  <TableCell>{row.Court_Id}</TableCell>
+                  <TableCell>{++index}</TableCell>
                   <TableCell>{row.Court_name}</TableCell>
                   <TableCell>{row.Court_price}</TableCell>
                   <TableCell><EditIcon onClick={(event) =>{Editcourt(row.Court_Id,row.Court_name,row.Court_price)}}  color={"primary"}></EditIcon><DeleteIcon color={"error"} onClick={() => {Editcourt_status(row.Court_Id,row.Court_status,row.Court_name)}}></DeleteIcon></TableCell>

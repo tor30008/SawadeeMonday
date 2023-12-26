@@ -20,9 +20,10 @@ export const Addprofile_service = async (Path, Name, Phone, Type) => {
   }
 };
 
-export const Deleteprofile_service = async (Player_id) => {
+export const Deleteprofile_service = async (Player_id,Player_status) => {
   const postdata = {
     Player_id: Player_id,
+    Player_status:Player_status
   };
   try {
     const res = await axios.post(
@@ -66,3 +67,23 @@ export const Editprofile_service = async (Path, Name, Phone, Type,Player_id) => 
     console.error(error);
   }
 };
+
+export const Getplayerjointoday_service = async() => { 
+  try{
+    const res = await axios.post("http://127.0.0.1:1111/getplayerjointoday");
+    const result = await res.data;
+    return result;
+  }catch(error){
+    console.log(error);
+  }
+}
+
+export const Getplayernotjointoday_service = async() => { 
+  try{ 
+    const res = await axios.post("http://127.0.0.1:1111/getplayernotjointoday");
+    const result = await res.data;
+    return result
+  }catch(error){
+    console.log(error);
+  }
+}

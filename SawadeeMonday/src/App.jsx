@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 
 import reactLogo from "./assets/react.svg";
 import viteLogo from "/vite.svg";
@@ -11,9 +11,15 @@ import TableCell from "@mui/material/TableCell";
 import TableContainer from "@mui/material/TableContainer";
 import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
+import List from "@mui/material/List";
+import ListItemAvatar from "@mui/material/ListItemAvatar";
+import ImageIcon from "@mui/icons-material/Image";
 import Paper from "@mui/material/Paper";
+import ListItem from "@mui/material/ListItem";
 import EditIcon from "@mui/icons-material/Edit";
-
+import Box from "@mui/material/Box";
+import Fab from "@mui/material/Fab";
+import Switch from "@mui/material/Switch";
 import {
   CardContent,
   CardHeader,
@@ -38,37 +44,58 @@ import AttachMoneyIcon from "@mui/icons-material/AttachMoney";
 import StackedBarChartIcon from "@mui/icons-material/StackedBarChart";
 import SportsBaseballIcon from "@mui/icons-material/SportsBaseball";
 import FingerprintIcon from "@mui/icons-material/Fingerprint";
+import AddIcon from "@mui/icons-material/Add";
 
 import Player from "../src/Player/Player";
 import Typeplayer from "../src/Typeplayer/Typeplayer";
 import Court from "../src/Court/Court";
+import Shuttercock from "./shuttercock/Shuttercock";
 import * as ReactRouterDom from "react-router-dom";
 import { createBrowserRouter, RouterProvider, Link } from "react-router-dom";
+import Allplayer_service from "./Service/Allplayer_service";
+import { Jointoday_service } from "./Service/Service";
+import io from "socket.io-client";
+import {Getplayerjointoday_service,Getplayernotjointoday_service} from "../src/Player/Player_service";
 
+const socket = io("http://127.0.0.1:1111/", { transports: ["websocket"] });
 
-function App() {
-  const [count, setCount] = useState(0);
-
-  return (
-    <>
-      return{" "}
-      <Button item="true" variant="contained">
-        Hello world
-      </Button>
-      ;
-    </>
-  );
-}
 export const Template_Web = () => {
-
   const [today, setToday] = useState(new Date());
   const [TimetoDay, setTimetoDay] = useState("");
   const [MenuId, SetMenuId] = useState("");
-  setInterval(() => {
-    setTimetoDay("");
-    setToday(new Date());
-    setTimetoDay(today.toLocaleDateString());
-  }, 3000);
+  const [Listplayer, setListplayer] = useState(null);
+  const [Listplayerjointoday2,setListplayerjointoday2] = useState(null);
+
+  useEffect(() => {
+    socket.on("M", (data) => {
+      socket.emit("MFC", "Sawadee by React");
+    });
+
+    socket.on("listplayertodayFromServer", (data) => {
+      console.log(data);
+    });
+
+    const getallplayer = async () => {
+      try {
+        const res = await Getplayernotjointoday_service();
+        const result = await res;
+        setListplayer(result);
+        const res2 = await Getplayerjointoday_service();
+        const result2 = await res2;
+        setListplayerjointoday2(result2);
+      
+      } catch (error) {
+        console.log(error);
+      }
+    };
+    getallplayer();
+  }, []);
+
+  /*setInterval(() => {
+      setTimetoDay("");
+      setToday(new Date());
+      setTimetoDay(today.toLocaleDateString());
+    }, 3000);//ทำให้มี side effect loop ไม่หยุด*/
 
   return (
     <>
@@ -85,13 +112,17 @@ export const Template_Web = () => {
         <Grid className="Menu-Template" xs={2}>
           <Paper sx={{ width: "100%" }}>
             <MenuList className="Menu-List">
-           
-                <MenuItem onClick={(event) => {
+              <MenuItem
+                onClick={(event) => {
                   SetMenuId(1);
-                }}>
+                }}
+              >
+                <ListItemIcon className="icon" fontSize="small">
                   <HomeIcon className="icon" fontSize="small"></HomeIcon>
-                  <ListItemText className="Item-List">หน้าแรก</ListItemText>
-                </MenuItem>
+                </ListItemIcon>
+
+                <ListItemText className="Item-List">หน้าแรก</ListItemText>
+              </MenuItem>
 
               <MenuItem
                 onClick={(event) => {
@@ -142,7 +173,11 @@ export const Template_Web = () => {
                 </ListItemIcon>
                 <ListItemText className="Item-List">สนาม</ListItemText>
               </MenuItem>
-              <MenuItem href={"/app"}>
+              <MenuItem
+                onClick={(event) => {
+                  SetMenuId(6);
+                }}
+              >
                 <ListItemIcon>
                   <SportsBaseballIcon
                     className="icon"
@@ -174,14 +209,12 @@ export const Template_Web = () => {
         </Grid>
         {/* Menu */}
         <Grid className="Grid-Content" xs={10}>
-          
-          {MenuId === 1 ? <Show_courtbadminton></Show_courtbadminton> : null}
+          {MenuId === 1 ? <Main_page list={Listplayer} listjoinplayer_main={Listplayerjointoday2}></Main_page> : null}
           {MenuId === 2 ? <Show_courtbadminton></Show_courtbadminton> : null}
           {MenuId === 3 ? <Player></Player> : null}
           {MenuId === 4 ? <Typeplayer></Typeplayer> : null}
           {MenuId === 5 ? <Court></Court> : null}
-          
-         
+          {MenuId === 6 ? <Shuttercock></Shuttercock> : null}
         </Grid>
       </Grid>
       {/**Content */}
@@ -410,11 +443,167 @@ export function Show_courtbadminton() {
 
       <Grid container>
         <Grid className="Button-Match" xs={12}>
-          <Icon color="primary">sss</Icon>
+          <Fab>
+            <AddIcon></AddIcon>
+          </Fab>
         </Grid>
       </Grid>
     </>
   );
 }
 
-export default Template_Web
+export const Main_page = (list = null) => {
+  const [Listplayertoday, setListplayertoday] = useState(null);
+  const [Listplayernotjoin, setListplaynotjoin] = useState(null);
+  
+  useEffect(() => {
+    console.log(Listplayernotjoin);
+  }, [Listplayertoday, Listplayernotjoin]);
+
+  const join_today = (Player_id, Status_join) => {
+    const data = {
+      Player_id: Player_id,
+      Joinday_status: Status_join,
+    };
+    try {
+      socket.emit("join", data);
+      socket.on("listplayertodayFromserver", (data) => {
+        setListplayertoday(data.listjoinday);
+        setListplaynotjoin(data.listplayer);
+        console.log(Listplayernotjoin);
+      }); // ส่งค่ามาทั้งหมด
+    } catch (error) {
+      console.log(error);
+    }
+  }; // Component เอาไว้เช็คชื่อ คนมาในแต่ละวัน
+
+  return (
+    <>
+      <Grid container spacing={2}>
+        <Grid item xs={4}>
+          <div className={"Grid_list"}>
+            <div>
+              <h2>แมตที่กำลังตีอยู่</h2>
+            </div>
+            <div>
+              <TableContainer>
+                <Table aria-label="TablePlayer"></Table>
+              </TableContainer>
+            </div>
+          </div>
+        </Grid>
+        <Grid item xs={4}>
+          <div className={"Grid_list"}>
+            <h2>คิวที่จะตีต่อ</h2>
+          </div>
+        </Grid>
+        <Grid item xs={4}>
+          <Grid item xs={12} className={"Grid_small"}>
+            <div>
+              <h2>รายชื่อคนตีวันนี้</h2>
+            </div>
+            <div>
+              <TableContainer>
+                <Table>
+                  <TableHead>
+                    <TableRow>
+                      <TableCell>ลำดับ</TableCell>
+                      <TableCell>ชื่อ</TableCell>
+                      <TableCell>ตีไปกี่เกมส์</TableCell>
+                      <TableCell>สถานนะ</TableCell>
+                    </TableRow>
+                  </TableHead>
+                  <TableBody>
+                    {Listplayertoday ? (
+                      Listplayertoday.map((row, index) => (
+                        <TableRow key={index}>
+                          <TableCell>{++index}</TableCell>
+                          <TableCell>{row.Player_name}</TableCell>
+                          {!row.Jointoday_round ? (
+                            <TableCell>ยังไม่ได้ตี</TableCell>
+                          ) : (
+                            <TableCell>{row.Jointoday_round}</TableCell>
+                          )}
+                          {row.Joinday_status == 1 ? (
+                            <TableCell>ยังตีอยู่</TableCell>
+                          ) : (
+                            <TableCell></TableCell>
+                          )}
+                        </TableRow>
+                      ))
+                    ) : (
+                      list.listjoinplayer_main.map((row,index) => (
+                        <TableRow key={index}>
+                          <TableCell>{++index}</TableCell>
+                          <TableCell>{row.Player_name}</TableCell>
+                          {!row.Jointoday_round ? (
+                            <TableCell>ยังไม่ได้ตี</TableCell>
+                          ) : (
+                            <TableCell>{row.Jointoday_round}</TableCell>
+                          )}
+                          {row.Joinday_status == 1 ? (
+                            <TableCell>ยังตีอยู่</TableCell>
+                          ) : (
+                            <TableCell></TableCell>
+                          )}
+                        </TableRow>
+                      ))
+                    )}
+                  </TableBody>
+                </Table>
+              </TableContainer>
+            </div>
+          </Grid>
+          <Grid item xs={12} className={"Grid_small"}>
+            <div>
+              <h2>รายชื่อคนในกลุ่ม</h2>
+            </div>
+            <div>
+              <TableContainer>
+                <Table>
+                  <TableHead>
+                    <TableRow>
+                      <TableCell>ลำดับ</TableCell>
+                      <TableCell>รายชื่อ/มือ</TableCell>
+                      <TableCell>วันนี้มาไหม</TableCell>
+                    </TableRow>
+                  </TableHead>
+                  {Listplayernotjoin ? (
+                    <TableBody>
+                   {Listplayernotjoin.map((row,index) => (
+                      <TableRow key={index}>
+                        <TableCell>{index}</TableCell>
+                        <TableCell>{row.Player_id}</TableCell>
+                        <TableCell><Button variant="outlined" aria-label="เข้าร่วมตี" onClick={(event) => { 
+                                join_today(row.Player_id,true)
+                            }}>ลงชื่อ</Button></TableCell>
+                      </TableRow>
+                   ))}
+                   </TableBody>
+                  ) : (
+                    <TableBody>
+                    {list.list.map((row, index) => (
+                        <TableRow key={index}>
+                          <TableCell>{row.Player_id}</TableCell>
+                          <TableCell>
+                            {row.Player_name + " / Lv." + row.Type_id}
+                          </TableCell>
+                          <TableCell>
+                            <Button variant="outlined" aria-label="เข้าร่วมตี" onClick={(event) => { 
+                                join_today(row.Player_id,true)
+                            }}>ลงชื่อ</Button>
+                          </TableCell>
+                        </TableRow>
+                      ))}
+                    </TableBody>
+                  )}
+                </Table>
+              </TableContainer>
+            </div>
+          </Grid>
+        </Grid>
+      </Grid>
+    </>
+  );
+};
+export default Template_Web;

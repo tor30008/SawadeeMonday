@@ -41,10 +41,10 @@
 @keyframes typewriter {
   from {
     width: 0;
-    color: chocolate;
+    color: black;
   }
   to {
     width: 100%;
-    color: Black;
+    color: White;
   }
 }
