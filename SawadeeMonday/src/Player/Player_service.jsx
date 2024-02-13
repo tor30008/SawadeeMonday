@@ -1,6 +1,7 @@
 import axios from "axios";
 import React, { useState } from "react";
 
+
 export const Addprofile_service = async (Path, Name, Phone, Type) => {
   const Formdata_newprofile = new FormData();
   Formdata_newprofile.append("image", Path);
@@ -60,7 +61,7 @@ export const Editprofile_service = async (Path, Name, Phone, Type,Player_id) => 
   Formdata_editprofile.append("Type", Type);
   Formdata_editprofile.append("Player_id",Player_id);
   try {
-    const res = await axios.post("http://127.0.0.1:7777/Editplayer",Formdata_editprofile,{ headers: { "Content-Type": "multipart/form-data" } });
+    const res = await axios.post(import.meta.env.VITE_HTTP_API+"Editplayer",Formdata_editprofile,{ headers: { "Content-Type": "multipart/form-data" } });
     const result = await res.data;
     return result;
   } catch (error) {
@@ -70,7 +71,7 @@ export const Editprofile_service = async (Path, Name, Phone, Type,Player_id) => 
 
 export const Getplayerjointoday_service = async() => { 
   try{
-    const res = await axios.post("http://127.0.0.1:1111/getplayerjointoday");
+    const res = await axios.post(import.meta.env.VITE_HTTP_API+"getplayerjointoday");
     const result = await res.data;
     return result;
   }catch(error){
@@ -80,7 +81,7 @@ export const Getplayerjointoday_service = async() => {
 
 export const Getplayernotjointoday_service = async() => { 
   try{ 
-    const res = await axios.post("http://127.0.0.1:1111/getplayernotjointoday");
+    const res = await axios.post(import.meta.env.VITE_HTTP_API+"getplayernotjointoday");
     const result = await res.data;
     return result
   }catch(error){

@@ -93,8 +93,9 @@ td{
 .Grid_list{
   height: 90vh;
   width: 100%;
-  background-color: white !important; 
+  background-color: #1e1e1e !important; 
   overflow: auto;
+  justify-content: center;
 }
 .Grid_small{
   height: 44.2vh;
@@ -109,7 +110,63 @@ td{
   margin-left: 2px;
   margin-right: 2px;
 }
-
+.QueueAvatar_Player{
+  display: flex;
+}
+.Listqueue_Player{
+  justify-content: center !important;
+  text-align: center !important;
+  align-items: center;
+  background-color: aqua;
+  margin-bottom: 10px !important;
+  border : 1px solid black;
+  border-radius: 10px;
+}
+ul {
+  margin-bottom: 5px !important;
+}
+.Float_Addmatch { 
+  display: flex;
+  align-items: center;;
+}
+.Listquene_match{
+  border : 1px solid black;
+  border-radius: 10px;
+  background-color: aqua !important;
+  margin-bottom: 2%;
+}
+.Detail_Listqueue_Time{
+  align-items: center !important;
+  display:flex !important;
+  justify-content:center ;
+}
+.Detail_Listqueue_Player{
+  justify-items: center !important;
+  display: inline-grid !important;
+}
+.Modaladdmatch{
+  position: absolute;
+    top : 40%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 400;
+    border: 2px solid #000;
+    box-shadow: 24;
+    p: 4;
+    background-color: rgb(41, 40, 40);
+    padding: 20px 20px 20px 20px;
+    text-align: center;
+    width: 30%;
+    color : white;
+}
+.TableHead{
+  position: sticky !important;
+  z-index: 1 !important;
+  top:0 !important;
+}
+.Timematch{
+  font-size: 10px;
+}
 /*.logo {
   height: 6em;
   padding: 1.5em;
