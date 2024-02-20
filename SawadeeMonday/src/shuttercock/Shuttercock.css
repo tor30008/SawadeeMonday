@@ -18,3 +18,13 @@
     justify-content: center;
     align-items: center;
 }
+.Textfield_Modal{ 
+    color : White !important;
+}
+.Table_Shuttercock{
+    display: flex;
+    justify-content: center;
+}
+.Table_data_center{
+    text-align: center;
+}
