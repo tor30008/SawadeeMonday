@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from "react";
-import { BrowserRouter as Router , Routes , Route , Link  } from "react-router-dom";
+import React, { useEffect, useState ,useRef,cache} from "react";
+import { BrowserRouter as Router , Routes , Route , Link ,useLocation  } from "react-router-dom";
 
 import reactLogo from "./assets/react.svg";
 import viteLogo from "/vite.svg";
@@ -33,6 +33,7 @@ import {
   ListItemIcon,
   ListItemText,
   MenuList,
+  ButtonGroup
 } from "@mui/material";
 import Grid from "@mui/material/Unstable_Grid2";
 import Card from "@mui/material/Card";
@@ -54,9 +55,10 @@ import Player from "../src/Player/Player";
 import Typeplayer from "../src/Typeplayer/Typeplayer";
 import Court from "../src/Court/Court";
 import Shuttercock from "./shuttercock/Shuttercock";
+import Payment from "./Payment/Payment";
 import Allplayer_service from "./Service/Allplayer_service";
 import { Jointoday_service } from "./Service/Service";
-import {Getallmatchplaying_today_service} from "./Service/Match_service";
+import {Getallmatchplaying_today_service , Randommatch_service,deleteMatchid_service,finishMatchid_service} from "./Service/Match_service";
 import io from "socket.io-client";
 import Modal from '@mui/material/Modal';
 import {
@@ -67,6 +69,10 @@ import { Clear } from "@mui/icons-material";
 import { Allcourt_service } from "./Service/Court_service";
 import { GetShuttercock_service } from "./shuttercock/Shuttercock_service";
 import Home from "./Home/Home";
+import ModalMoreshuttercock from "./ModalMoreShuttercock/ModalMoreshuttercock";
+import ModalFinishMatch from "./ModalFinishMatch/ModalFinishMatch";
+import CRUD from "./CRUD/CRUD";
+import Swal from 'sweetalert2';
 
 const socket = io(import.meta.env.VITE_HTTP_SOCKET, { transports: ["websocket"] });
 
@@ -76,46 +82,11 @@ export const Template_Web = () => {
   const [MenuId, SetMenuId] = useState("");
   const [Listplayer, setListplayer] = useState(null);
   const [Listplayerjointoday2, setListplayerjointoday2] = useState(null);
-  const [Listmatching_playnow,setListmatching_playnow] = useState(null);
-
   useEffect(() => {
 
-    socket.on("M", (data) => {
-      socket.emit("MFC", "Sawadee by React");
-    });
-
-    socket.on("listplayertodayFromServer", (data) => {
-      console.log(data);
-    });
-
-    socket.on("Listmatchplaying_to_server",(data) => {
-      socket.emit("Listmatchplaying_from_server",(data) => {
-        console.log(data);
-      })
-    });
-
-   
     
-    getallplayer();
-    getMatch_nowplay();
 
   }, []);
-  const getMatch_nowplay = async() => {
-    try{
-      const res = await Getallmatchplaying_today_service();
-      const result = await res;
-      if(result != null){
-        setListmatching_playnow(result);
-      }
-      else{
-        setListmatching_playnow(false);
-      }
-      setListmatching_playnow(result);
-
-    }catch(error){
-      console.log(error);
-    }
-  }
 
   const getallplayer = async () => {
     try {
@@ -129,11 +100,6 @@ export const Template_Web = () => {
       console.log(error);
     }
   };
-
-  const test_routing = async() => {
-    getMatch_nowplay();
-    getallplayer();
-  }
 
   return (
     <>
@@ -155,7 +121,7 @@ export const Template_Web = () => {
                 <ListItemIcon className="icon" fontSize="small">
                   <HomeIcon className="icon" fontSize="small"></HomeIcon>
                 </ListItemIcon>
-                <Link to="/main" onClick={test_routing}>
+                <Link to="/main">
                   <ListItemText className="Item-List">หน้าแรก</ListItemText>
                 </Link>
               </MenuItem>
@@ -224,7 +190,9 @@ export const Template_Web = () => {
                     fontSize="small"
                   ></AttachMoneyIcon>
                 </ListItemIcon>
-                <ListItemText className="Item-List">ค่าใช้จ่าย</ListItemText>
+                <Link to="/Payment">
+                  <ListItemText className="Item-List">ค่าใช้จ่าย</ListItemText>
+                </Link>
               </MenuItem>
               <MenuItem>
                 <ListItemIcon>
@@ -235,24 +203,34 @@ export const Template_Web = () => {
                 </ListItemIcon>
                 <ListItemText className="Item-List">สถิติ</ListItemText>
               </MenuItem>
+
+              <MenuItem>
+                <ListItemIcon>
+                  <StackedBarChartIcon
+                    className="icon"
+                    fontSize="small"
+                  ></StackedBarChartIcon>
+                </ListItemIcon>
+
+                <Link to="/CRUD">
+                  <ListItemText className="Item-List">CRUD</ListItemText>
+                </Link>             
+              </MenuItem>
             </MenuList>
           </Paper>
         </Grid>
         {/* Menu */}
         <Grid className="Grid-Content" xs={12} lg = {10}>          
             <Routes>
-              <Route path="/" exact element={<Home></Home>}></Route>
-              <Route path="/main" element={<Main_page list={Listplayer}
-                listjoinplayer_main={Listplayerjointoday2}
-                listmatch_playnow = {Listmatching_playnow}
-              ></Main_page>}></Route>
-              <Route path="/Show" element={<Show_courtbadminton></Show_courtbadminton>}></Route>
+              <Route path="/"  element={<Home></Home>}></Route>
+              <Route path="/main" element={<Main_page></Main_page>}></Route>
+              {<Route path="/Show" element={<Show_courtbadminton></Show_courtbadminton>}></Route>}
               <Route path="/Player" element={<Player></Player>}></Route>
               <Route path="/Typeplayer" element={<Typeplayer></Typeplayer>}></Route>
-              <Route path="/Court" element={<Court/>}></Route>
+              <Route path="/Court" Component={Court}></Route>
               <Route path="/Shuttercock" element={<Shuttercock></Shuttercock>}></Route>
+              <Route path="/Payment" element={<Payment></Payment>}></Route>
             </Routes>
-          
         </Grid>
         </Router>
       </Grid>
@@ -492,6 +470,10 @@ export function Show_courtbadminton() {
 }
 
 export const Main_page = (list = null) => {
+
+
+  const [StatusModalmoreshuttercock,setStatusModalmoresuttercock] = useState(false); // ตัวกำหนด status modal
+
   const [Listplayertoday, setListplayertoday] = useState(null);
   const [Listplayernotjoin, setListplaynotjoin] = useState(null);
   const [LengthListplayertoday, setLengthListplayertoday] = useState(null);
@@ -506,15 +488,67 @@ export const Main_page = (list = null) => {
   const [Selectplayerfour, setSelectplayerfour] = useState(null);
   const [SelectCourt , setSelectCourt] = useState(null);
   const [SelectShuttercock , setSelectShuttercock] = useState(null);
+  const [selectmatchIdMoreshuttercock,setSelectmatchIdMoreshuttercock] = useState(false);
+  const [isloadAllmatch,setisloadAllmatch] = useState(false); // ไว้เช็คว่าควรอัพเดทไหม
+  const [isloadRandommatch,setisloadRandommatch] = useState(false);
+
 
   const [ListPlaying, setListPlaying] = useState(false);
   const [ListPlayingtwo,setListPlayingtwo] = useState(false);
   const [ListPlayingthree,setListPlayingthree] = useState(false);
   const [ListPlayingfour , setListPlayingfour] = useState(false);
-  const [Listrecheckmatch_playnow , setListrecheckcatch_playnow] = useState(false);
+  const [List_matchplaynow , setList_matchplaynow] = useState(false);
   const [Listcourt, setListcourt] = useState(false);
   const [ListShuttercock,setListShuttercock] = useState(false);
+  const location = useLocation();
   
+
+  useEffect(() => {
+    getRandomMap();
+    getAllmatchplaynow();
+    getAllshuttercock();
+    getAllcourt();
+    getPlayerjointoday();
+    getPlayernotjointoday();
+  },[])
+
+  useEffect(() => {
+    if(Selectplayerone && SelectPlayertwo && Selectplayerthree && Selectplayerfour && SelectCourt && SelectShuttercock){
+      setButtonSubmitmatch(false);
+    }
+    else{
+      setButtonSubmitmatch(true);
+    }
+    // ถ้ากรอกข้อมูลไม่ตรบ
+  },[Selectplayerone,SelectPlayertwo,Selectplayerthree,Selectplayerfour,SelectCourt,SelectShuttercock]);
+
+  useEffect(() => {
+    const reloadallMatch = async() => {
+      if(isloadAllmatch){
+        getAllmatchplaynow();
+        setisloadAllmatch(false);
+      }
+    }
+    reloadallMatch();
+  },[isloadAllmatch])
+
+/*useEffect(() => {
+  console.log(isloadRandommatch);
+  const reloadRandommatch = async() => {
+    if(isloadRandommatch == true){
+      console.log("เข้า")
+      socket.on("queuebyserver", (data) => {
+        console.log(data);
+
+        //console.log(data.queue_match);
+        setQueueplayertoday(data.queue_match);
+        setPeoplenotqueue(data.player_notqueue);
+      }); 
+      setisloadRandommatch(false)
+    }
+  }
+  reloadRandommatch()
+},[isloadRandommatch])*/
 
   const handlemodalopen_addmatch = () => {
     setOpenmodal_addmatch(true);
@@ -530,7 +564,6 @@ export const Main_page = (list = null) => {
     socket.on("res_Playerone-readytoplay",(data) => { 
       setListPlaying(data);
     })
-    console.log(ListPlaying);
   }
 
   const selectplayertwo_playering = (Playerone_id) => {
@@ -557,13 +590,11 @@ export const Main_page = (list = null) => {
     })
   }
 
-  const submitdraftmatch = () => {
+  const submitdraftmatch = async() => {
     socket.emit("Submitdraftmatch_to_server",{Playerone_id : Selectplayerone,Playertwo_id : SelectPlayertwo,Playerthree_id:Selectplayerthree,Playerfour_id : Selectplayerfour,Court_id : SelectCourt,Type_BB_id : SelectShuttercock});
     handlemodalclose_addmatch();
-    socket.on("Listmatchplaying_from_server",(data) => {
-      console.log(data);
-    });
-    //Clear_data();
+    getAllmatchplaynow();
+   // setisloadRandommatch(true);
   }
   
   const Clear_data = () => {
@@ -571,7 +602,7 @@ export const Main_page = (list = null) => {
     setListPlayingtwo(false);
     setListPlayingthree(false);
     setListPlayingfour(false);
-    setListShuttercock(false);
+    //setListShuttercock(false);
     //setListcourt(false);
 
     setSelectplayerone(null);
@@ -583,25 +614,6 @@ export const Main_page = (list = null) => {
 
   }//ไว้เคลียช้อมูล Usestate
 
-  useEffect(() => {
-    
-    if(Selectplayerone && SelectPlayertwo && Selectplayerthree && Selectplayerfour && SelectCourt && SelectShuttercock){
-      setButtonSubmitmatch(false);
-    }
-    else{
-      setButtonSubmitmatch(true);
-    }
-    
-    if(ListShuttercock === false){
-      getAllshuttercock();
-    }
-    if(Listcourt === false){
-      getAllcourt();
-    }
-    console.log(list); 
-    console.log(Listplayertoday);
-  }, [Listplayertoday,Listplayernotjoin,Queueplayertoday,Peoplenotqueue,ListPlaying,Selectplayerone,SelectPlayertwo,Selectplayerthree,Selectplayerfour,SelectCourt,SelectShuttercock,ListShuttercock,Listcourt]);
-  //Listplayertoday, Listplayernotjoin, Queueplayertoday, Peoplenotqueue,ListPlaying,Listshuttercock
   const join_today = (Player_id, Status_join) => {
     const data = {
       Player_id: Player_id,
@@ -619,7 +631,6 @@ export const Main_page = (list = null) => {
         console.log(data.queue_match);
         setQueueplayertoday(data.queue_match);
         setPeoplenotqueue(data.player_notqueue);
-
       }); // รับคิวตีแบด กะ คนไม่มีคิวตีแบด
     } catch (error) {
       console.log(error);
@@ -646,6 +657,140 @@ export const Main_page = (list = null) => {
     }
   }
 
+  
+  const getAllmatchplaynow = async() => {
+    try{
+      const res = await Getallmatchplaying_today_service();
+      const result = await res;
+      setList_matchplaynow(result);
+    }catch(error){
+      console.log(error);
+    }
+  }
+
+  const getPlayernotjointoday = async() => {
+    try{
+      const res = await Getplayernotjointoday_service();
+      const result = await res;
+      setListplaynotjoin(result);
+     // console.log(result);
+    }catch(error){
+      console.log(error);
+    }
+  }
+
+  const getPlayerjointoday = async() => {
+    try{
+      const res = await Getplayerjointoday_service();
+      const result = await res;
+      setListplayertoday(result);
+      //setLengthListplayertoday(result.length);
+    }catch(error){
+      console.log(error);
+    }
+  }
+
+  const getRandomMap = async() => {
+    try {
+      const res = await Randommatch_service();
+      const result = await res;
+      setQueueplayertoday(result.queue_match);
+    }catch(err){
+      console.log(err);
+    }
+  }
+
+  const handle_Statusmodalmoreshutter_cock_open = (e,id) => {
+    e.stopPropagation();// ให้หยุดการทำงานของ Parent event
+    setStatusModalmoresuttercock(true);
+    setSelectmatchIdMoreshuttercock(id);
+  } // ส่งค่ามาให้เปิด modal  และ เปิด tag child modalmoreshuttercock
+
+  const handle_Statusmodalmoreshutter_cock_close = (e) => {
+    setStatusModalmoresuttercock(e);
+    setSelectmatchIdMoreshuttercock(null);
+    setisloadAllmatch(true);
+  }
+
+  const finishMatch = async (matchId,TOO_ID,TOW_ID,TWO_ID,TWW_ID,match_timestart) => { 
+    /*
+      TOO_ID = teamone_playerone_id 
+      TOW_ID = teamone_playertwo_id
+      TWO_ID = teamtwo_playerone_id
+      TWW_ID = teamtwo_playertwo_id
+      
+    */
+    var statusMatch;
+    Swal.fire({
+      title : "Manage Match",
+      showDenyButton : true,
+      showCancelButton : true,
+      confirmButtonText : "Finish Match",
+      denyButtonText : "Delete Match"
+    }).then((result) =>  {
+      if(result.isConfirmed){
+        //Swal.fire("Finish Match")
+        Swal.fire({
+          title: 'กรอกข้อมูลคะแนนทั้ง 2 ทีม ',
+          showCancelButton : true,
+          cancelButtonText : 'ยกเลิก',
+          cancelButtonColor : '#d33',
+            html:
+              '<input id="scoreTeamone" class="swal2-input" type ="number" placeholder="คะแนนทีม1">' +
+              '<input id="scoreTeamtwo" class="swal2-input" type = "number" placeholder="คะแนนทีม2">',
+            preConfirm: () => {
+              const scoreTeamone = document.getElementById("scoreTeamone")
+              const scoreTeamtwo = document.getElementById("scoreTeamtwo")
+              if(!scoreTeamone.value){ 
+                Swal.showValidationMessage("กรุณากรอกคะแนนทีม 1")
+                return false;
+              }
+              if(!scoreTeamtwo.value){
+                Swal.showValidationMessage("กรุณากรอกคะแนนทีม 2")
+                return false;
+              }
+              return [scoreTeamone.value,scoreTeamtwo.value]
+            }
+        }).then((data) => {
+          console.log(data);
+          const scoreTeamone = data.value[0]
+          const scoreTeamtwo = data.value[1]
+          const promiseisfinishMatchid = async(matchId,TOO_ID,TOW_ID,TWO_ID,TWW_ID,match_timestart,scoreTeamone,scoreTeamtwo) => {
+            const result = await finishMatchid_service(matchId,TOO_ID,TOW_ID,TWO_ID,TWW_ID,match_timestart,scoreTeamone,scoreTeamtwo);
+            console.log(result);
+            return true;
+          }//ประกาศ function
+          promiseisfinishMatchid(matchId,TOO_ID,TOW_ID,TWO_ID,TWW_ID,match_timestart,scoreTeamone,scoreTeamtwo).then(() => {
+            setisloadAllmatch(true);
+            console.log(isloadAllmatch);
+            console.log(List_matchplaynow);
+          })
+          getPlayerjointoday();
+        }).catch((error) => {
+          console.log(error);
+        })
+        //console.log(promiseisfinishMatchid);
+        //promiseisfinishMatchid();
+      }// กรณี confirm แล้วกรอก ข้อมูลคะแนนทีม1 แล้ว ทีม 2
+      if(result.isDenied){
+        const promisedeleteMatchid = async () => {
+          const result = await deleteMatchid_service(matchId,TOO_ID,TOW_ID,TWO_ID,TWW_ID,match_timestart);
+            if(result === true){
+              Swal.fire(`Delete Matchid : ${matchId}`,"","success");
+              return true;
+            }
+        }
+        promisedeleteMatchid().then((data) => {
+          console.log(data);
+          setisloadAllmatch(true);
+          console.log(List_matchplaynow);
+          getPlayerjointoday();
+        })
+      }
+    })
+  }
+
+
   return (
     <>
       <Grid container spacing={2}>
@@ -662,16 +807,16 @@ export const Main_page = (list = null) => {
               </Grid>
             </Grid>
             
-              {!Listrecheckmatch_playnow ? (
+              {!List_matchplaynow? (
                 <p>ไม่มีคน</p>
               ) : (
-                list.listmatch_playnow.map((row,index) => (
-              <Grid item xs = {12} lg = {12} className={"Listquene_match"} key={index}>
+                List_matchplaynow.map((row,index) => (
+              <Grid item xs = {12} lg = {12} className={"Listquene_match"} key={index} onClick = {() => (finishMatch(row.Match_id,row.Teamone_playerone,row.Teamone_playertwo,row.Teamtwo_playerone,row.Teamtwo_playertwo,row.Match_timestart))}>
                 <Grid container spacing={2} key = {index}>
-                    <Grid item xs={2} lg ={2} className={"Detail_Listqueue_Time"}>
+                    <Grid item xs={1} lg ={1} className={"Detail_Listqueue_Time"}>
                       <p>{index + 1}</p>
                     </Grid>
-                    <Grid item xs={12} lg = {8} className={"Detail_Listqueue_Player"}>
+                    <Grid item xs={12} lg = {5} className={"Detail_Listqueue_Player"}>
                       <Grid container direction={"row"} spacing={2}>
                         <Grid item xs = {6} >
                           <p>{row.Teamone_Playerone_name}</p>
@@ -689,25 +834,42 @@ export const Main_page = (list = null) => {
                         </Grid>
                       </Grid>
                     </Grid>
-                  <Grid item xs = {2} className={"Detail_Listqueue_Time"}>
-                    <Grid container direction={"row"}>
-                      <Grid item xs={12} >
-                        <p className={"Timematch"}>{row.Match_timestart_convert}</p>
+                    <Grid item xs = {3} lg = {3} className={"Detail_Listqueue_Time"}>
+                      <Grid container direction={"row"}>
+                        <Grid item xs={6}>
+                          <p>จำนวนลูกแบด</p>
+                          <ButtonGroup variant="outlined">
+                            <Button>-</Button>
+                            <Button>{row.Count_Shuttercock}</Button>
+                            <Button onClick={(e)=>(handle_Statusmodalmoreshutter_cock_open(e,row.Match_id))}>+</Button>
+                          </ButtonGroup>
+                        </Grid>
+                      </Grid>
+                    </Grid>
+                    <Grid item lg = {3} className={"Timematch"}>
+                      <Grid container direction={"row"} >
+                        <p>{row.Match_timestart_convert}</p>
                       </Grid>
                     </Grid>
                   </Grid>
-                </Grid>
               </Grid>
                 ))
               )}
           </div>
         </Grid>
+        {/**Modal Moreshuttercock */}
+        {
+          StatusModalmoreshuttercock ? ( <ModalMoreshuttercock status = {{stauts : StatusModalmoreshuttercock,id:selectmatchIdMoreshuttercock}} 
+                                          onDatareturn = {handle_Statusmodalmoreshutter_cock_close}></ModalMoreshuttercock> ) : null
+        }
+        
+        {/**Modal Moreshuttercock */}
 
         <Grid item lg = {4} xs={12}>
-          <div className={"Grid_list"} color="white">
+          <div className={"Grid_list"} color={"white"}>
             <h2>คิวที่จัดให้</h2>
             <div>
-              {LengthListplayertoday >= 4 ? (
+              {Queueplayertoday ? (
                 Queueplayertoday.map((row, index) => (
                   <Grid container spacing={1} key={index} className={"Listqueue_Player"}>
                     {row.map((player,row_index) => (
@@ -754,17 +916,7 @@ export const Main_page = (list = null) => {
                           <TableRow key={index}>
                             <TableCell>{++index}</TableCell>
                             <TableCell>{row.Player_name}</TableCell>
-                            <TableCell>{row.Joinday_round}</TableCell>
-                            {/*row.Jointoday_round ? (
-                              <TableCell>ยังไม่ได้ตี</TableCell>
-                            ) : (
-                              <TableCell>{row.Jointoday_round}</TableCell>
-                            )}
-                            {row.Joinday_status == 1 ? (
-                              <TableCell>ยังตีอยู่</TableCell>
-                            ) : (
-                              <TableCell></TableCell>
-                            )*/}
+                            <TableCell>{row.Joinday_round ? row.Joinday_round : 0 }</TableCell>
                             {!row.Joinday_status ?
                               (<TableCell>กลับบ้านแล้ว</TableCell>) 
                                 : 
@@ -775,21 +927,7 @@ export const Main_page = (list = null) => {
                             }
                           </TableRow>
                         ))
-                      : list.listjoinplayer_main.map((row, index) => (
-                          <TableRow key={index}>
-                            <TableCell>{++index}</TableCell>
-                            <TableCell>{row.Player_name}</TableCell>
-                            <TableCell>{row.Joinday_round}</TableCell>
-                            {!row.Joinday_status ?
-                              (<TableCell>กลับบ้านแล้ว</TableCell>) 
-                                : 
-                            row.Joinday_status == true ? 
-                              (<TableCell>ยังตีอยู่</TableCell>) 
-                               : 
-                              (<TableCell>ยังอยู่ในเกมส์</TableCell>) 
-                            }
-                          </TableRow>
-                        ))}
+                      : <p>ไม่มีข้อมูล</p>}
                   </TableBody>
                 </Table>
               </TableContainer>
@@ -833,25 +971,7 @@ export const Main_page = (list = null) => {
                     </TableBody>
                   ) : (
                     <TableBody>
-                      {list.list.map((row, index) => (
-                        <TableRow key={index}>
-                          <TableCell>{++index}</TableCell>
-                          <TableCell>
-                            {row.Player_name + " / Lv." + row.Type_id}
-                          </TableCell>
-                          <TableCell>
-                            <Button
-                              variant="outlined"
-                              aria-label="เข้าร่วมตี"
-                              onClick={() => {
-                                join_today(row.Player_id, true);
-                              }}
-                            >
-                              ลงชื่อ
-                            </Button>
-                          </TableCell>
-                        </TableRow>
-                      ))}
+                     
                     </TableBody>
                   )}
                 </Table>
@@ -982,7 +1102,7 @@ export const Main_page = (list = null) => {
                   </Grid>
 
                   <Grid item xs={6}>
-                    <Button variant={"contained"} onClick={submitdraftmatch} disabled={ButtonSubmitmatch} >จัดแข่ง</Button>
+                    <Button variant={"contained"} onClick={submitdraftmatch} disabled={ButtonSubmitmatch}>จัดแข่ง</Button>
                   </Grid>
                   <Grid item xs={6}>
                     <Button variant={"contained"} onClick={handlemodalclose_addmatch}>ยกเลิก</Button>
@@ -995,3 +1115,9 @@ export const Main_page = (list = null) => {
   );
 };
 export default Template_Web;
+
+
+/* พี่มิก
+  naming convension การตั้งชื่อ Component Class Api จะทำให้ ลายมือการเขียนโค๊ด สวยขึ้น
+  useState และ useEffect แล้วจะลดการใช้ useeffect ได้ขนาดไหน
+*/

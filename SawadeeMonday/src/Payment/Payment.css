@@ -1,0 +1,28 @@
+.headLine{
+    color:white;
+}
+.heightSection{
+    height: 50vh;
+    max-width: 50%;
+    text-align: center;   
+}
+.daySelect{
+    width:60%;
+}
+#day{
+    margin-bottom: 10px;;
+}
+.custom-date {
+  width: 100%;
+  display: flex;
+  /*justify-content: center; /* จัดกึ่งกลางแนวนอน */
+  /*align-items: center; /* จัดกึ่งกลางแนวตั้ง */
+  margin-left : 20px;
+  color : color;
+}
+.custom-date * , .custom-date button , .custom-date span{
+    color : white
+}
+.custom-date .TextField {
+    color : white !important;
+}

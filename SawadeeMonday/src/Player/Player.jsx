@@ -40,6 +40,7 @@ import Stack from '@mui/material/Stack';
 import Swal from 'sweetalert2';
 import 'sweetalert2/src/sweetalert2.scss';
 import Switch from '@mui/material/Switch';
+import { useLocation } from "react-router-dom";
 
 function Player() {
   const [open, Setopen] = useState(false);
@@ -59,6 +60,8 @@ function Player() {
   const [Reture_Typeid, setReture_Typeid] = useState(null);
 
   const [Alllistplayer, setAlllistplayer] = useState(null);
+
+  const location = useLocation();
 
   const handleclose = () => {
     setName_profile("");
@@ -95,6 +98,10 @@ function Player() {
     fetch_type_player();
     get_all_player();
   }, []); //เอาไว้เรียกค่า TypePlayer and Allplayer
+
+  useEffect(() => {
+    console.log(location);
+  },[location])
 
   const ChangeTypePlayer = (event) => {
     setType_profile(event.target.value);

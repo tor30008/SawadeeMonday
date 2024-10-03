@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-
+import { useLocation } from "react-router-dom";
 import Grid from "@mui/material/Unstable_Grid2";
 import Button from "@mui/material/Button";
 import Card from "@mui/material/Card";
@@ -24,7 +24,6 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from "@mui/icons-material/Edit";
 import Swal from 'sweetalert2';
 import 'sweetalert2/src/sweetalert2.scss';
-
 const Court = () => {
   const [Namecourt, setNamecourt] = useState(null);
   const [Pricecourt, setPricecourt] = useState(null);
@@ -97,7 +96,7 @@ const Court = () => {
           </Typography>
           <Typography id="modal-modal-description" sx={{ mt: 2 }}>
             <Grid container spacing={2}>
-              <Grid item xs={12}>
+              <Grid item xs={12} >
                 <TextField
                   className={"Gridmodal_add"}
                   id="NameCourd"

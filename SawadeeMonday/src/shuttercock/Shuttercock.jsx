@@ -20,6 +20,7 @@ import Switch from '@mui/material/Switch';
 import io from "socket.io-client";
 import Swal from 'sweetalert2';
 import 'sweetalert2/src/sweetalert2.scss';
+import { useLocation } from "react-router-dom";
 
 const socket = io(import.meta.env.VITE_HTTP_SOCKET, {transports:["websocket"]});
 
@@ -32,6 +33,12 @@ const Shuttercock = () => {
   const [Submitmodal,setSubmitmodal] = useState(true);
   const [Listshuttercock,setListshuttercock] = useState(null);
   const [CRUD_TYPE,setCRUD_TYPE] = useState("C");
+  const location = useLocation();
+
+  useEffect(()=>{
+    GetAllshuttercock();
+    console.log("test shuttercock");
+  },[])
 
   useEffect(() => {
     if(Nameshuttercock  && Priceshuttercock && Speedshuttercock){
@@ -40,11 +47,21 @@ const Shuttercock = () => {
     else{
       setSubmitmodal(true);
     }
-
-    GetAllshuttercock();
-
   },[Nameshuttercock,Priceshuttercock,Speedshuttercock,CRUD_TYPE]);// ปุ่ม submmit modal shuttercock
 
+  useEffect(() => {
+    const test = async() => {
+      try{
+        const res = await GetShuttercock_service();
+        console.log(res);
+        //setListshuttercock(res);
+        //console.log(res);
+      }catch(err){
+        console.log(err);
+      }
+    }
+    test();
+  },[location]);
 
   const handle_modalshutter_open = () => {
     ClearData_shuttercock();

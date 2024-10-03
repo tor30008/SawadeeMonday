@@ -164,8 +164,10 @@ ul {
   z-index: 1 !important;
   top:0 !important;
 }
-.Timematch{
-  font-size: 10px;
+.Timematch{ 
+  display: flex !important;
+  justify-content: center !important;
+  align-items: center !important;
 }
 /*.logo {
   height: 6em;
