@@ -1,6 +1,6 @@
 import React, { Component, useState, useRef, useEffect } from "react";
 import Box from "@mui/material/Box";
-import Grid from "@mui/material/Unstable_Grid2";
+import Grid from "@mui/material/Grid";
 import axios from "axios";
 import {
   TableContainer,
@@ -30,16 +30,21 @@ import Avatar from "@mui/material/Avatar";
 
 import "../Player/Player.css";
 import FetchData from "../Service/Service";
-import {Addprofile_service , Deleteprofile_service, Editprofile_service, Getprofile_service} from "../Player/Player_service";
+import {
+  Addprofile_service,
+  Deleteprofile_service,
+  Editprofile_service,
+  Getprofile_service,
+} from "../Player/Player_service";
 import Allplayer_service from "../Service/Allplayer_service";
 import { Add, AllInboxSharp, Update } from "@mui/icons-material";
 import { red } from "@mui/material/colors";
-import DeleteIcon from '@mui/icons-material/Delete';
-import Alert from '@mui/material/Alert';
-import Stack from '@mui/material/Stack';
-import Swal from 'sweetalert2';
-import 'sweetalert2/src/sweetalert2.scss';
-import Switch from '@mui/material/Switch';
+import DeleteIcon from "@mui/icons-material/Delete";
+import Alert from "@mui/material/Alert";
+import Stack from "@mui/material/Stack";
+import Swal from "sweetalert2";
+import "sweetalert2/src/sweetalert2.scss";
+import Switch from "@mui/material/Switch";
 import { useLocation } from "react-router-dom";
 
 function Player() {
@@ -69,7 +74,7 @@ function Player() {
     setPath_Profile(null);
     setType_profile(0);
     Setopen(false);
-  };// กำหนดเวลาปิดปุ่ม Modal Addplayer
+  }; // กำหนดเวลาปิดปุ่ม Modal Addplayer
 
   const handleopen = () => {
     Setopen(true);
@@ -101,7 +106,7 @@ function Player() {
 
   useEffect(() => {
     console.log(location);
-  },[location])
+  }, [location]);
 
   const ChangeTypePlayer = (event) => {
     setType_profile(event.target.value);
@@ -130,7 +135,7 @@ function Player() {
     <>
       <Grid container xs={12}>
         <Grid xs={11}>
-          <h2>รายชื่อสมาชิก</h2>
+          <h2 style={{ color: "white" }}>รายชื่อสมาชิก</h2>
         </Grid>
         <Grid xs={1}>
           <Button
@@ -165,6 +170,7 @@ function Player() {
                   id="transition-modal-title"
                   variant="h6"
                   component="h2"
+                  style={{ color: "white" }}
                 >
                   รายละเอียดผู้เล่น
                 </Typography>
@@ -204,10 +210,10 @@ function Player() {
                             console.log(
                               URL.createObjectURL(event.target.files[0])
                             );
-                            setPath_Profile(
-                              event.target.files[0]
+                            setPath_Profile(event.target.files[0]);
+                            setAvatar_pic(
+                              URL.createObjectURL(event.target.files[0])
                             );
-                            setAvatar_pic(URL.createObjectURL(event.target.files[0]));
                           }}
                         ></input>
                       </Button>
@@ -221,7 +227,6 @@ function Player() {
                           accept="image/png, image/jpeg"
                           onChange={(event) => {
                             console.log(event.target.value);
-
                           }}
                         ></input>
                       </Avatar>
@@ -233,7 +238,7 @@ function Player() {
                   <Box component={"form"} noValidate autoComplete="off">
                     <TextField
                       id="outlined-basic"
-                      label="ขื่อเว้ย"
+                      label="ขื่อ"
                       variant="outlined"
                       fullWidth
                       className={"Text_field "}
@@ -244,6 +249,9 @@ function Player() {
                       value={Name_profile}
                       InputLabelProps={{
                         style: { color: "red" },
+                      }}
+                      InputProps={{
+                        style: { color: "white" }, // สีของข้อความในช่องป้อนข้อมูล
                       }}
                       onChange={(event) => {
                         setName_profile(event.target.value);
@@ -260,13 +268,16 @@ function Player() {
                   >
                     <TextField
                       id="outlined-basic"
-                      label="เบอร์โทรเว้ย"
+                      label="เบอร์โทร"
                       variant="outlined"
                       defaultValue=""
                       multiline={false}
                       value={Phone_profile}
                       onChange={(event) => {
                         setPhone_profile(event.target.value);
+                      }}
+                      InputProps={{
+                        style: { color: "white" }, // สีของข้อความในช่องป้อนข้อมูล
                       }}
                       fullWidth
                     ></TextField>
@@ -346,92 +357,97 @@ function Player() {
   );
 }
 
-const AllPlayer = ({ list = null ,Typelist = null}) => {
+const AllPlayer = ({ list = null, Typelist = null }) => {
+  const [Edit_btn, setEditbtn] = useState(false);
+  const [EditName, setEditname] = useState("");
+  const [Editphone, setEditphone] = useState("");
+  const [EditPath, setEditpath] = useState(null);
+  const [EditType, setEditType] = useState(0);
+  const [EditAvatar, setEditAvatar] = useState(null);
+  const [EditPlayer_id, setEditPlayer_id] = useState(0);
 
-  const [Edit_btn,setEditbtn] = useState(false);
-  const [EditName,setEditname] = useState("");
-  const [Editphone,setEditphone] = useState("");
-  const [EditPath,setEditpath] = useState(null);
-  const [EditType,setEditType] = useState(0);
-  const [EditAvatar,setEditAvatar] = useState(null);
-  const [EditPlayer_id,setEditPlayer_id] = useState(0);
-
-  const handleopenedit = (Player_id = null) =>{
+  const handleopenedit = (Player_id = null) => {
     Get_profile(Player_id);
     setEditbtn(true);
-  }
+  };
 
-  const handlecloseedit = () =>{
+  const handlecloseedit = () => {
     setEditbtn(false);
-  }
+  };
 
-  const Editprofile = async() => {
-    try{
-      const res = await Editprofile_service(EditPath,EditName,Editphone,EditType,EditPlayer_id);
+  const Editprofile = async () => {
+    try {
+      const res = await Editprofile_service(
+        EditPath,
+        EditName,
+        Editphone,
+        EditType,
+        EditPlayer_id
+      );
       const result = await res;
-      if(result){
+      if (result) {
         setEditbtn(false);
       }
-    }catch(error){
+    } catch (error) {
       console.log(error);
     }
-  }
+  };
 
-  const Get_profile = async({Player_id=null}) =>{
-    try{
+  const Get_profile = async ({ Player_id = null }) => {
+    try {
       const res = await Getprofile_service(Player_id);
       const result = await res;
       setEditname(result[0].Player_name);
       setEditpath(result[0].Player_photo);
       setEditAvatar(result[0].Player_photo);
-      setEditphone(result[0].Player_tel)
+      setEditphone(result[0].Player_tel);
       setEditType(result[0].Type_id);
       setEditPlayer_id(Player_id);
-    }catch(error){
+    } catch (error) {
       console.error(error);
     }
-  }
+  };
 
-  const Delete_Btn = (Player_id,Player_status,Player_name) =>{
-
+  const Delete_Btn = (Player_id, Player_status, Player_name) => {
     let Update_status;
     let title;
     let buttontext;
 
-    if(Player_status == 1){
-      Update_status = 0 ;
-      title = "คุณต้องการถอนผู้เล่น "+`'`+Player_name+` ' ออกจากรายชื่อตีประจำ`;
+    if (Player_status == 1) {
+      Update_status = 0;
+      title =
+        "คุณต้องการถอนผู้เล่น " + `'` + Player_name + ` ' ออกจากรายชื่อตีประจำ`;
       buttontext = "ถอน";
-    }
-    else{
+    } else {
       Update_status = 1;
-      title = "คุณต้องการเพิ่มผู้เล่น "+`'`+Player_name+` ' ในรายชื่อตีประจำ`;
+      title =
+        "คุณต้องการเพิ่มผู้เล่น " + `'` + Player_name + ` ' ในรายชื่อตีประจำ`;
       buttontext = "เพิ่ม";
     }
 
     //DeletePlayer(Player_id);
     Swal.fire({
-      title:title,
-      showDenyButton:true,
-      confirmButtonText:buttontext,
-      denyButtonText:"ยกเลิก"
-    }).then((result) =>{
-      if(result.isConfirmed){
-        DeletePlayer(Player_id,Update_status);
-        Swal.fire("Delete Success","","success");
+      title: title,
+      showDenyButton: true,
+      confirmButtonText: buttontext,
+      denyButtonText: "ยกเลิก",
+    }).then((result) => {
+      if (result.isConfirmed) {
+        DeletePlayer(Player_id, Update_status);
+        Swal.fire("Delete Success", "", "success");
       }
-    })
+    });
   };
 
-  const DeletePlayer = async(Player_id,Player_status) =>{
-      try{
-        const res = await Deleteprofile_service(Player_id,Player_status);
-        const data = await res;
-        console.log(data);
-      }catch(error){
-        console.log("Error : Delete Player");
-      }
-  }
+  const DeletePlayer = async (Player_id, Player_status) => {
+    try {
+      const res = await Deleteprofile_service(Player_id, Player_status);
+      const data = await res;
+      console.log(data);
+    } catch (error) {
+      console.log("Error : Delete Player");
+    }
+  };
   return (
     <>
       {list ? (
@@ -449,20 +465,49 @@ const AllPlayer = ({ list = null ,Typelist = null}) => {
                 </TableRow>
               </TableHead>
               <TableBody>
-                {list.map((row,index)=>(
+                {list.map((row, index) => (
                   <TableRow key={row.Player_id}>
                     <TableCell>{++index}</TableCell>
-                    <TableCell><span className={"Tablecell"}><Avatar className={"Tablecell_avatar"} alt="Remy Sharp" src={row.Player_photo} /><p>{row.Player_name}</p></span></TableCell>
-                    <TableCell>{row.Type_name} (Lv : {row.Type_id})</TableCell>
-                    <TableCell>{row.Player_tel}</TableCell>
-                    <TableCell><span className={"Tablecell"}><EditIcon onClick={() => handleopenedit({Player_id:row.Player_id})} color={"primary"} ></EditIcon></span></TableCell>
                     <TableCell>
-                      <Switch checked={row.Player_status} onChange={() => {Delete_Btn(row.Player_id,row.Player_status,row.Player_name)}}></Switch>
+                      <span className={"Tablecell"}>
+                        <Avatar
+                          className={"Tablecell_avatar"}
+                          alt="Remy Sharp"
+                          src={row.Player_photo}
+                        />
+                        <p>{row.Player_name}</p>
+                      </span>
+                    </TableCell>
+                    <TableCell>
+                      {row.Type_name} (Lv : {row.Type_id})
+                    </TableCell>
+                    <TableCell>{row.Player_tel}</TableCell>
+                    <TableCell>
+                      <span className={"Tablecell"}>
+                        <EditIcon
+                          onClick={() =>
+                            handleopenedit({ Player_id: row.Player_id })
+                          }
+                          color={"primary"}
+                        ></EditIcon>
+                      </span>
+                    </TableCell>
+                    <TableCell>
+                      <Switch
+                        checked={row.Player_status}
+                        onChange={() => {
+                          Delete_Btn(
+                            row.Player_id,
+                            row.Player_status,
+                            row.Player_name
+                          );
+                        }}
+                      ></Switch>
                     </TableCell>
                   </TableRow>
-      ))}
+                ))}
               </TableBody>
-            </Table>  
+            </Table>
           </TableContainer>
         </Grid>
       ) : (
@@ -524,10 +569,10 @@ const AllPlayer = ({ list = null ,Typelist = null}) => {
                             console.log(
                               URL.createObjectURL(event.target.files[0])
                             );
-                            setEditpath(
-                              event.target.files[0]
+                            setEditpath(event.target.files[0]);
+                            setEditAvatar(
+                              URL.createObjectURL(event.target.files[0])
                             );
-                            setEditAvatar(URL.createObjectURL(event.target.files[0]));
                           }}
                         ></input>
                       </Button>
@@ -541,7 +586,6 @@ const AllPlayer = ({ list = null ,Typelist = null}) => {
                           accept="image/png, image/jpeg"
                           onChange={(event) => {
                             console.log(event.target.value);
-
                           }}
                         ></input>
                       </Avatar>
@@ -604,20 +648,20 @@ const AllPlayer = ({ list = null ,Typelist = null}) => {
                         id="demo-simple-select"
                         label="ประเภทมือ"
                         value={EditType}
+                        sx={{color:"white"}}
                       >
-                        <MenuItem key={0} value={0}>
+                        <MenuItem key={0} sx={{color:"white"}} value={0}>
                           กรุณาเลือกประเภทฝีมือ
                         </MenuItem>
                         {Typelist.map((data) => (
-                          <MenuItem key={data.Type_id} value={data.Type_id}>
+                          <MenuItem key={data.Type_id} sx={{color:"white"}} value={data.Type_id}>
                             {data.Type_name}
                           </MenuItem>
                         ))}
                       </Select>
                     ) : (
                       <p>loading</p>
-                    )
-                    }
+                    )}
                   </FormControl>
                 </Grid>
               </Grid>
@@ -629,9 +673,11 @@ const AllPlayer = ({ list = null ,Typelist = null}) => {
                       variant="contained"
                       color="primary"
                       item="true"
-                      onClick={(event) =>{Editprofile()}}
+                      onClick={(event) => {
+                        Editprofile();
+                      }}
                     >
-                      Success 
+                      Success
                     </Button>
                   ) : (
                     <Button

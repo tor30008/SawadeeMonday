@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useLocation } from "react-router-dom";
-import Grid from "@mui/material/Unstable_Grid2";
+import Grid from "@mui/material/Grid";
 import Button from "@mui/material/Button";
 import Card from "@mui/material/Card";
 import CardContent from "@mui/material/CardContent";
@@ -19,11 +19,16 @@ import Paper from "@mui/material/Paper";
 
 import { CardActionArea, CardActions, TextField } from "@mui/material";
 import "../Court/Court.css";
-import { Addcourt_service, Allcourt_service ,Editcourt_service, Editcourtstatus_service } from "../Service/Court_service";
-import DeleteIcon from '@mui/icons-material/Delete';
+import {
+  Addcourt_service,
+  Allcourt_service,
+  Editcourt_service,
+  Editcourtstatus_service,
+} from "../Service/Court_service";
+import DeleteIcon from "@mui/icons-material/Delete";
 import EditIcon from "@mui/icons-material/Edit";
-import Swal from 'sweetalert2';
-import 'sweetalert2/src/sweetalert2.scss';
+import Swal from "sweetalert2";
+import "sweetalert2/src/sweetalert2.scss";
 const Court = () => {
   const [Namecourt, setNamecourt] = useState(null);
   const [Pricecourt, setPricecourt] = useState(null);
@@ -62,12 +67,12 @@ const Court = () => {
       console.log(error);
     }
   };
- 
+
   return (
     <>
       <Grid container spacing={0}>
         <Grid item xs={11}>
-          <h2>สนามแบดมินตัน</h2>
+          <h2 style={{ color: "white" }}>สนามแบดมินตัน</h2>
         </Grid>
         <Grid item xs={1}>
           <Button
@@ -75,6 +80,8 @@ const Court = () => {
             item="true"
             variant="outlined"
             onClick={openmodaladd}
+            sx={{ color: "white" }}
+            className="font-input"
           >
             เพิ่มสนามแบดมินตัน
           </Button>
@@ -91,12 +98,17 @@ const Court = () => {
         sx={{ mt: 5 }}
       >
         <Box className={"Modaladd"}>
-          <Typography id="modal-modal-title" variant="h6" component="h2">
+          <Typography
+            id="modal-modal-title"
+            variant="h6"
+            component="h2"
+            sx={{ color: "white" }}
+          >
             เพิ่มสนามแบดมินตัน
           </Typography>
           <Typography id="modal-modal-description" sx={{ mt: 2 }}>
             <Grid container spacing={2}>
-              <Grid item xs={12} >
+              <Grid item xs={12}>
                 <TextField
                   className={"Gridmodal_add"}
                   id="NameCourd"
@@ -105,6 +117,9 @@ const Court = () => {
                   onChange={(event) => {
                     setNamecourt(event.target.value);
                     console.log(event.target.value);
+                  }}
+                  InputProps={{
+                    style: { color: "white" }, // สีของข้อความในช่องป้อนข้อมูล
                   }}
                 ></TextField>
               </Grid>
@@ -116,6 +131,9 @@ const Court = () => {
                   variant="outlined"
                   onChange={(event) => {
                     setPricecourt(event.target.value);
+                  }}
+                  InputProps={{ 
+                    style: { color: "white" }, // สีของข้อความในช่องป้อนข้อมูล
                   }}
                 ></TextField>
               </Grid>
@@ -151,65 +169,72 @@ const Court = () => {
 const Allcourt = ({ list = null }) => {
   //console.log(list);
 
-  const [Editcourtname,setEditcourtname] = useState(null);
-  const [Editcourtprice,setEditcourtprice] = useState(null);
-  const [Editcourtid,setEditcourtid] = useState(null);
-  const [Editmodal,setEditmodal] = useState(false);
+  const [Editcourtname, setEditcourtname] = useState(null);
+  const [Editcourtprice, setEditcourtprice] = useState(null);
+  const [Editcourtid, setEditcourtid] = useState(null);
+  const [Editmodal, setEditmodal] = useState(false);
 
   const closemodaledit = () => {
     setEditmodal(false);
-  }
-  const openmodaledit = () =>{
+  };
+  const openmodaledit = () => {
     setEditmodal(true);
-  }
+  };
 
-  const Editcourt = (Court_id=null,Court_name=null,Court_price=null) => { 
+  const Editcourt = (
+    Court_id = null,
+    Court_name = null,
+    Court_price = null
+  ) => {
     console.log(Court_id);
     setEditcourtid(Court_id);
     setEditcourtname(Court_name);
     setEditcourtprice(Court_price);
     openmodaledit();
-  }
+  };
 
-  const Editsubmit = async(Court_id=null,Court_name=null,Court_price=null) => {
-    try{
-      const res = await Editcourt_service(Court_id,Court_name,Court_price);
+  const Editsubmit = async (
+    Court_id = null,
+    Court_name = null,
+    Court_price = null
+  ) => {
+    try {
+      const res = await Editcourt_service(Court_id, Court_name, Court_price);
       const result = res;
-      if(result){
+      if (result) {
         Court();
       }
-    }catch(error){
+    } catch (error) {
       console.log(error);
     }
-  }
-  const Editcourt_status = async(id=null,status=null,name=null)=>{
+  };
+  const Editcourt_status = async (id = null, status = null, name = null) => {
     let title;
     let statusnow;
     let buttontext;
-    if(status == 1){
+    if (status == 1) {
       title = "คุณต้องการลบคอร์ดแบดหมายเลข : " + name;
       statusnow = 0;
       buttontext = "DELETE";
-    }
-    else{
+    } else {
       title = "คุณต้องการเพิ่มคอร์ดแบดหมายเลข : " + name;
       statusnow = 1;
       buttontext = "ADD";
     }
     Swal.fire({
-      title:title,
-      showDenyButton:true,
-      confirmButtonText:buttontext,
-      denyButtonText:"Cancel"
+      title: title,
+      showDenyButton: true,
+      confirmButtonText: buttontext,
+      denyButtonText: "Cancel",
     }).then((result) => {
-      if(result.isConfirmed){
-        const result = Editcourtstatus_service(id,statusnow); 
-        if(result){
-          Swal.fire("Delete Success","","success");
+      if (result.isConfirmed) {
+        const result = Editcourtstatus_service(id, statusnow);
+        if (result) {
+          Swal.fire("Delete Success", "", "success");
         }
       }
     });
-  }
+  };
   return (
     <>
       <TableContainer>
@@ -224,16 +249,38 @@ const Allcourt = ({ list = null }) => {
           </TableHead>
           <TableBody>
             {list ? (
-              list.map((row,index) => (
+              list.map((row, index) => (
                 <TableRow>
                   <TableCell>{++index}</TableCell>
                   <TableCell>{row.Court_name}</TableCell>
                   <TableCell>{row.Court_price}</TableCell>
-                  <TableCell><EditIcon onClick={(event) =>{Editcourt(row.Court_Id,row.Court_name,row.Court_price)}}  color={"primary"}></EditIcon><DeleteIcon color={"error"} onClick={() => {Editcourt_status(row.Court_Id,row.Court_status,row.Court_name)}}></DeleteIcon></TableCell>
+                  <TableCell>
+                    <EditIcon
+                      onClick={(event) => {
+                        Editcourt(
+                          row.Court_Id,
+                          row.Court_name,
+                          row.Court_price
+                        );
+                      }}
+                      color={"primary"}
+                    ></EditIcon>
+                    <DeleteIcon
+                      color={"error"}
+                      onClick={() => {
+                        Editcourt_status(
+                          row.Court_Id,
+                          row.Court_status,
+                          row.Court_name
+                        );
+                      }}
+                    ></DeleteIcon>
+                  </TableCell>
                 </TableRow>
               ))
-            ):(<p>ไม่มีข้อมูล</p>)}
-            
+            ) : (
+              <p>ไม่มีข้อมูล</p>
+            )}
           </TableBody>
         </Table>
       </TableContainer>
@@ -245,29 +292,38 @@ const Allcourt = ({ list = null }) => {
         sx={{ mt: 5 }}
       >
         <Box className={"Modaladd"}>
-          <Typography id="modal-modal-title" variant="h6" component="h2">
+          <Typography
+            id="modal-modal-title"
+            variant="h6"
+            component="h2"
+            style={{ color: "white" }}
+          >
             เพิ่มสนามแบดมินตัน
           </Typography>
           <Typography id="modal-modal-description" sx={{ mt: 2 }}>
             <Grid container spacing={2}>
               <Grid item xs={12}>
                 <TextField
-                  className={"Gridmodal_add"}
+                  className={"Gridmodal_add font-input"}
                   id="NameCourd"
                   label="ชื่อสนาม"
                   variant="outlined"
                   value={Editcourtname}
-                  onChange={(event)=>{setEditcourtname(event.target.value)}}
+                  onChange={(event) => {
+                    setEditcourtname(event.target.value);
+                  }}
                 ></TextField>
               </Grid>
               <Grid item xs={12}>
                 <TextField
-                  className={"Gridmodal_add"}
+                  className={"Gridmodal_add font-input"}
                   id="PriceCourd"
                   label="ราคาต่อชั่วโมง"
                   value={Editcourtprice}
-                  variant="outlined"    
-                  onChange={(event)=>{setEditcourtprice(event.target.value)}}
+                  variant="outlined"
+                  onChange={(event) => {
+                    setEditcourtprice(event.target.value);
+                  }}
                 ></TextField>
               </Grid>
             </Grid>
@@ -278,7 +334,7 @@ const Allcourt = ({ list = null }) => {
                 <Button
                   variant="Outlined"
                   onClick={(event) => {
-                    Editsubmit(Editcourtid,Editcourtname,Editcourtprice)
+                    Editsubmit(Editcourtid, Editcourtname, Editcourtprice);
                   }}
                 >
                   ตกลง

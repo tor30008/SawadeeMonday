@@ -30,8 +30,8 @@ export const Payment = () => {
     },[selectedDate])
 
     const setDate = (e) => {
-        console.log(e)
-        console.log("Test fate")
+        console.log(e.target.value)
+        //console.log("Test fate")
     }
 
   return (
@@ -53,13 +53,31 @@ export const Payment = () => {
                       borderColor : 'white'
                     }
                   }
-                }}/>
+                }}
+                  onChange = {(event) => setDate(event)}
+                  format = 'YYYY-MM-DD'
+                />
                 </DemoContainer>
               </LocalizationProvider>
            </Grid>
 
-           <Grid item xs = {2}>
-            <TextField />
+           <Grid item xs = {2} ssx={{ mx: 'auto'}}>
+            <LocalizationProvider dateAdapter={AdapterDayjs}>
+                <DemoContainer components = {['DatePicker']}>
+                  <DatePicker label = 'EndDate' sx = {{
+                    input : {color : 'white'},
+                    '& .MuiOutlinedInput-root' : {
+                      '& fieldset' : {
+                        borderColor : 'white'
+                      }
+                    }
+                  }}
+                  format = 'YYYY-MM-DD'
+                  >
+
+                  </DatePicker>
+                </DemoContainer>
+            </LocalizationProvider>
            </Grid>
             
         </Grid>
